@@ -263,20 +263,22 @@ export default function Home() {
               </div>
             </div>
             
-            {/* Image Grid */}
+            {/* Asymmetric Image Grid */}
             <div className="flex-1 w-full grid grid-cols-2 gap-3 sm:gap-4 relative z-10">
-              <div className="overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300">
-                <img src="/creative-1.jpg" alt="Creative work 1" loading="lazy" className="w-full h-48 sm:h-64 object-cover hover:scale-110 transition-transform duration-700" />
+              <div className="flex flex-col gap-3 sm:gap-4">
+                <div className="overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300">
+                  <img src="/creative-1.jpg" alt="Creative work 1" loading="lazy" className="w-full h-32 sm:h-40 object-cover hover:scale-110 transition-transform duration-700" />
+                </div>
+                <div className="overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300">
+                  <img src="/creative-2.jpg" alt="Creative work 2" loading="lazy" className="w-full h-24 sm:h-32 object-cover hover:scale-110 transition-transform duration-700" />
+                </div>
               </div>
-              <div className="overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300 mt-6 sm:mt-10">
-                <img src="/creative-2.jpg" alt="Creative work 2" loading="lazy" className="w-full h-48 sm:h-64 object-cover hover:scale-110 transition-transform duration-700" />
+              <div className="flex flex-col pt-6 sm:pt-10">
+                <div className="overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300">
+                  <video src="/creative-video.mp4" autoPlay loop muted playsInline className="w-full h-52 sm:h-64 object-cover hover:scale-110 transition-transform duration-700" />
+                </div>
               </div>
             </div>
-          </div>
-          
-          {/* Full Width Cinematic Video */}
-          <div className="mt-8 w-full overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300 relative z-10">
-            <video src="/LAAG TA BAI.mp4" autoPlay loop muted playsInline controls className="w-full aspect-video md:aspect-[21/9] object-cover hover:scale-105 transition-transform duration-700" />
           </div>
         </div>
       </section>
