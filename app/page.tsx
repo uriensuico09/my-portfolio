@@ -143,10 +143,12 @@ export default function Home() {
 
       {/* Navigation Menu */}
       <nav className="flex flex-wrap gap-4 md:gap-8 mb-16 text-sm md:text-base font-semibold border-b border-blue-800/50 pb-4">
+        <a href="#about" className="text-blue-200 hover:text-orange-500 transition-colors">About</a>
         <a href="#skills" className="text-blue-200 hover:text-orange-500 transition-colors">Skills</a>
         <a href="#creative" className="text-blue-200 hover:text-orange-500 transition-colors">Creative Work</a>
         <a href="#projects" className="text-blue-200 hover:text-orange-500 transition-colors">Projects</a>
         <a href="#certificates" className="text-blue-200 hover:text-orange-500 transition-colors">Certifications</a>
+        <a href="#contact" className="text-blue-200 hover:text-orange-500 transition-colors">Contact</a>
       </nav>
 
       {/* Header / Hero Section */}
@@ -161,7 +163,7 @@ export default function Home() {
             I also work as a freelance photographer, videographer, and video editor, bringing a strong creative eye and attention to detail to all my technical projects. Welcome to my digital portfolio!
           </p>
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
-            <a href="mailto:urienadriane09@gmail.com" className="group inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-blue-950 font-bold rounded-lg transition-all hover:scale-105 shadow-[0_0_15px_rgba(249,115,22,0.4)] hover:shadow-[0_0_25px_rgba(249,115,22,0.6)]">
+            <a href="#contact" className="group inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-blue-950 font-bold rounded-lg transition-all hover:scale-105 shadow-[0_0_15px_rgba(249,115,22,0.4)] hover:shadow-[0_0_25px_rgba(249,115,22,0.6)]">
               Contact Me
               <svg className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
             </a>
@@ -197,13 +199,26 @@ export default function Home() {
         </div>
       </section>
 
+      {/* About Me Section */}
+      <section id="about" className="mb-16 pt-8">
+        <h3 className="text-2xl font-semibold mb-6 border-b border-orange-500/30 pb-2">About Me</h3>
+        <div className="bg-blue-950/40 border border-blue-800/40 p-6 sm:p-8 rounded-2xl backdrop-blur-sm shadow-sm hover:border-orange-500/30 transition-colors">
+          <p className="text-blue-200 leading-relaxed mb-4 text-base md:text-lg">
+            Hello! I am a dedicated IT student with a strong passion for crafting clean, intuitive, and dynamic digital experiences. My journey into technology started with a fascination for how things work under the hood, which quickly evolved into a love for frontend development, web design, and system architecture.
+          </p>
+          <p className="text-blue-200 leading-relaxed text-base md:text-lg">
+            When I'm not writing code or studying, you can usually find me exploring my creative side through photography and videography. I believe that having a strong visual eye helps me build better, more engaging user interfaces. I am constantly learning new technologies and am always looking for exciting opportunities to collaborate and grow!
+          </p>
+        </div>
+      </section>
+
       {/* Skills Section */}
       <section id="skills" className="mb-16 pt-8">
         <h3 className="text-2xl font-semibold mb-6 border-b border-orange-500/30 pb-2">Technical Skills</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
             { title: "Frontend Development", skills: ['JavaScript', 'TypeScript', 'React', 'Next.js', 'Tailwind CSS', 'HTML/CSS'] },
-            { title: "Backend & Cloud", skills: ['Node.js', 'SQL', 'Firebase', 'REST APIs', 'Linux'] },
+            { title: "Backend & Cloud", skills: ['Node.js', 'SQL', 'Firebase'] },
             { title: "Tools & Workflow", skills: ['Git', 'GitHub', 'VS Code', 'Figma', 'Vercel'] }
           ].map((category) => (
             <div key={category.title} className="bg-blue-950/40 border border-blue-800/40 p-6 rounded-2xl backdrop-blur-sm shadow-sm hover:border-orange-500/30 transition-colors">
@@ -237,7 +252,7 @@ export default function Home() {
                 Alongside my IT studies, I have extensive experience in visual storytelling. I shoot, direct, and edit high-quality photo and video content for clients. This creative background gives me a unique perspective on UI/UX design and digital media.
               </p>
               <div className="flex flex-wrap gap-2 mb-8">
-                {['Photography', 'Videography', 'Premiere Pro', 'After Effects', 'Lightroom'].map((skill) => (
+                {['Photography', 'Videography','Drone Pilot', 'Premiere Pro','Photoshop', 'After Effects', 'Lightroom'].map((skill) => (
                   <span key={skill} className="px-3 py-1.5 bg-blue-900/40 text-orange-400 rounded-lg text-xs font-semibold border border-blue-800/50">{skill}</span>
                 ))}
               </div>
@@ -248,22 +263,20 @@ export default function Home() {
               </div>
             </div>
             
-            {/* Asymmetric Image Grid */}
+            {/* Image Grid */}
             <div className="flex-1 w-full grid grid-cols-2 gap-3 sm:gap-4 relative z-10">
-              <div className="flex flex-col gap-3 sm:gap-4">
-                <div className="overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300">
-                  <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=400&q=80" alt="Photography sample 1" className="w-full h-32 sm:h-40 object-cover hover:scale-110 transition-transform duration-700" />
-                </div>
-                <div className="overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300">
-                  <img src="https://images.unsplash.com/photo-1554046920-90dc5f3ac6ed?auto=format&fit=crop&w=400&q=80" alt="Photography sample 2" className="w-full h-24 sm:h-32 object-cover hover:scale-110 transition-transform duration-700" />
-                </div>
+              <div className="overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300">
+                <img src="/creative-1.jpg" alt="Creative work 1" loading="lazy" className="w-full h-48 sm:h-64 object-cover hover:scale-110 transition-transform duration-700" />
               </div>
-              <div className="flex flex-col pt-6 sm:pt-10">
-                <div className="overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300">
-                  <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=400&q=80" alt="Photography sample 3" className="w-full h-52 sm:h-64 object-cover hover:scale-110 transition-transform duration-700" />
-                </div>
+              <div className="overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300 mt-6 sm:mt-10">
+                <img src="/creative-2.jpg" alt="Creative work 2" loading="lazy" className="w-full h-48 sm:h-64 object-cover hover:scale-110 transition-transform duration-700" />
               </div>
             </div>
+          </div>
+          
+          {/* Full Width Cinematic Video */}
+          <div className="mt-8 w-full overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300 relative z-10">
+            <video src="/LAAG TA BAI.mp4" autoPlay loop muted playsInline controls className="w-full aspect-video md:aspect-[21/9] object-cover hover:scale-105 transition-transform duration-700" />
           </div>
         </div>
       </section>
@@ -291,7 +304,7 @@ export default function Home() {
             >
               {cert.thumbnail || cert.type === 'image' ? (
                 <div className="relative h-48 overflow-hidden bg-blue-900/30 border-b border-blue-800/50">
-                  <img src={cert.thumbnail || cert.fileUrl} alt={cert.title} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                  <img src={cert.thumbnail || cert.fileUrl} alt={cert.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
                 </div>
               ) : (
                 <div className="relative flex h-48 items-center justify-center overflow-hidden bg-blue-900/30 border-b border-blue-800/50">
@@ -315,6 +328,8 @@ export default function Home() {
             Whether you have a specific project in mind, need a freelance developer or creative, or just want to connect, my inbox is always open!
           </p>
           <form onSubmit={handleContactSubmit} className="flex flex-col gap-4 text-left mt-8 max-w-xl mx-auto relative z-10">
+            {/* Honeypot spam protection */}
+            <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-blue-200 mb-1">Name</label>
@@ -345,10 +360,10 @@ export default function Home() {
 
       {/* Certificate Viewer Modal */}
       {selectedCert && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 sm:p-8 backdrop-blur-sm" onClick={() => setSelectedCert(null)} onContextMenu={(e) => e.preventDefault()}>
-          <div className="relative w-full max-w-5xl h-[80vh] sm:h-[90vh] bg-blue-950 rounded-xl border border-blue-800 flex flex-col overflow-hidden shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 sm:p-8 backdrop-blur-sm" onClick={() => setSelectedCert(null)} onContextMenu={(e) => e.preventDefault()} role="dialog" aria-modal="true" aria-labelledby="modal-title">
+          <div className="relative w-full max-w-5xl h-[80vh] sm:h-[90vh] bg-blue-950 rounded-xl border border-blue-800 flex flex-col overflow-hidden shadow-2xl" onClick={(e) => e.stopPropagation()} role="document">
             <div className="flex justify-between items-center p-4 border-b border-blue-800 bg-blue-900/50">
-              <h3 className="text-white font-bold">Certificate Preview</h3>
+              <h3 id="modal-title" className="text-white font-bold">Certificate Preview</h3>
               <div className="flex items-center gap-4">
                 {selectedCert.pdfUrl && (
                   <a href={`${selectedCert.pdfUrl}#toolbar=0`} target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:text-orange-400 text-sm font-semibold transition-colors">
