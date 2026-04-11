@@ -83,7 +83,8 @@ export default function Home() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const formData = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
     formData.append("access_key", "29cda32f-e4df-413d-9e7a-6ff0df3cd726");
 
     try {
@@ -96,7 +97,7 @@ export default function Home() {
 
       if (response.ok) {
         setIsSubmitted(true);
-        e.currentTarget.reset(); // Clear the form fields after sending
+        form.reset(); // Clear the form fields after sending
         setTimeout(() => setIsSubmitted(false), 5000); // Reset after 5 seconds
       } else {
         alert("Error: " + data.message);
