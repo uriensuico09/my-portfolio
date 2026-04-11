@@ -5,25 +5,27 @@ import NetworkDots from "./NetworkDots";
 import ProjectsSection from "./ProjectsSection";
 
 const certificatesData = [
-  { id: 1, title: "Blockchain Developer Training", issued: "Jan 2024", type: "pdf", fileUrl: "/certificates/1.pdf", thumbnail: "/certificates/1-thumbnail.jpg" },
-  { id: 3, title: "GETTING STARTED WITH FULL STACK JAVA DEVELOPER", issued: "Jun 2023", type: "pdf", fileUrl: "/certificates/3.pdf", thumbnail: "/certificates/3-thumbnail.jpg" },
-  { id: 2, title: "Introduction to Cybersecurity", issued: "2023", type: "pdf", fileUrl: "/certificates/2.pdf", thumbnail: "/certificates/2-thumbnail.jpg" },
-  { id: 4, title: "C++ Essentials 1", issued: "2023", type: "pdf", fileUrl: "/certificates/4.pdf", thumbnail: "/certificates/4-thumbnail.jpg" },
-  { id: 5, title: "JavaScript Essentials 1", issued: "2022", type: "pdf", fileUrl: "/certificates/5.pdf", thumbnail: "/certificates/5-thumbnail.jpg" },
-  { id: 6, title: "Networking Basics", issued: "2022", type: "pdf", fileUrl: "/certificates/6.pdf", thumbnail: "/certificates/6-thumbnail.jpg" },
-  { id: 7, title: "Python and Flask Frameworks", issued: "2021", type: "pdf", fileUrl: "/certificates/7.pdf", thumbnail: "/certificates/7-thumbnail.jpg" },
-  { id: 8, title: "Python for Beginners", issued: "2021", type: "pdf", fileUrl: "/certificates/8.pdf", thumbnail: "/certificates/8-thumbnail.jpg" },
-  { id: 9, title: "Python 101 for Data Science", issued: "2020", type: "jpg", fileUrl: "/certificates/9.jpg", thumbnail: "/certificates/9.jpg" },
-  { id: 10, title: "Certificate 10", issued: "2020", type: "pdf", fileUrl: "/certificates/10.pdf", thumbnail: "/certificates/10-thumbnail.jpg" },
+  { id: 1, title: "Blockchain Developer Training", issued: " 2026", type: "pdf", fileUrl: "/certificates/1.pdf", thumbnail: "/certificates/1-thumbnail.jpg" },
+  { id: 3, title: "GETTING STARTED WITH FULL STACK JAVA DEVELOPER", issued: " 2026", type: "pdf", fileUrl: "/certificates/3.pdf", thumbnail: "/certificates/3-thumbnail.jpg" },
+  { id: 2, title: "Introduction to Cybersecurity", issued: "2026", type: "pdf", fileUrl: "/certificates/2.pdf", thumbnail: "/certificates/2-thumbnail.jpg" },
+  { id: 4, title: "C++ Essentials 1", issued: "2026", type: "pdf", fileUrl: "/certificates/4.pdf", thumbnail: "/certificates/4-thumbnail.jpg" },
+  { id: 5, title: "JavaScript Essentials 1", issued: "2026", type: "pdf", fileUrl: "/certificates/5.pdf", thumbnail: "/certificates/5-thumbnail.jpg" },
+  { id: 6, title: "Networking Basics", issued: "2026", type: "pdf", fileUrl: "/certificates/6.pdf", thumbnail: "/certificates/6-thumbnail.jpg" },
+  { id: 7, title: "Python and Flask Frameworks", issued: "2026", type: "pdf", fileUrl: "/certificates/7.pdf", thumbnail: "/certificates/7-thumbnail.jpg" },
+  { id: 8, title: "Python for Beginners", issued: "2026", type: "pdf", fileUrl: "/certificates/8.pdf", thumbnail: "/certificates/8-thumbnail.jpg" },
+  { id: 9, title: "Python 101 for Data Science", issued: "2026", type: "jpg", fileUrl: "/certificates/9.jpg", thumbnail: "/certificates/9.jpg" },
+  { id: 10, title: "Certificate 10", issued: "2026", type: "pdf", fileUrl: "/certificates/10.pdf", thumbnail: "/certificates/10-thumbnail.jpg" },
 ];
 
 export default function Home() {
-  const [selectedCert, setSelectedCert] = useState<{url: string, type: string} | null>(null);
+  const [selectedCert, setSelectedCert] = useState<{url: string, type: string, pdfUrl?: string} | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
   const [typedName, setTypedName] = useState("");
   const fullName = "Urien Adriane O. Suico";
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   useEffect(() => {
     // Start fade out after 2 seconds
@@ -36,43 +38,25 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-    let isDeleting = false;
-    let currentIndex = 0;
-
-    const type = () => {
-      if (!isDeleting && currentIndex <= fullName.length) {
-        // Typing forward
-        setTypedName(fullName.slice(0, currentIndex));
-        currentIndex++;
-        timeoutId = setTimeout(type, 100); // Typing speed
-      } else if (isDeleting && currentIndex >= 0) {
-        // Deleting backward
-        setTypedName(fullName.slice(0, currentIndex));
-        currentIndex--;
-        timeoutId = setTimeout(type, 50); // Deleting speed (faster)
-      } else if (!isDeleting && currentIndex > fullName.length) {
-        // Pause at the end before deleting
-        isDeleting = true;
-        currentIndex--;
-        timeoutId = setTimeout(type, 2500); // Wait 2.5 seconds when name is fully typed
-      } else if (isDeleting && currentIndex < 0) {
-        // Pause before re-typing
-        isDeleting = false;
-        currentIndex = 0;
-        timeoutId = setTimeout(type, 500); // Wait half a second before re-typing
-      }
-    };
-
-    const timer = setTimeout(type, 2400); // Delays the start for the loading screen
+    let typingInterval: NodeJS.Timeout;
+    const timer = setTimeout(() => {
+      let i = 0;
+      typingInterval = setInterval(() => {
+        setTypedName(fullName.slice(0, i + 1));
+        i++;
+        if (i >= fullName.length) {
+          clearInterval(typingInterval);
+        }
+      }, 100); // Typing speed in milliseconds
+    }, 2400); // Delays the start so it waits for the loading screen to finish
 
     return () => {
       clearTimeout(timer);
-      clearTimeout(timeoutId);
+      clearInterval(typingInterval);
     };
   }, []);
 
-  // Listen for 'Escape' key to close the certificate modal
+  // Accessibility: Close modal on 'Escape' key press
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setSelectedCert(null);
@@ -82,17 +66,31 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedCert]);
 
-  // Toggle dark mode class on HTML document
+  // Monitor scroll position for the Back to Top button
   useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDarkMode]);
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 400);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+      setTimeout(() => setIsSubmitted(false), 3000); // Reset after 3 seconds
+    }, 1500);
+  };
 
   return (
-    <main className="relative z-10 min-h-screen overflow-x-hidden p-4 sm:p-8 md:p-24 max-w-4xl mx-auto font-sans text-blue-50 selection:bg-orange-500 selection:text-blue-950 transition-colors duration-500">
+    <main className="relative z-10 min-h-screen overflow-x-hidden p-4 sm:p-8 md:p-24 max-w-4xl mx-auto font-sans text-blue-50 selection:bg-orange-500 selection:text-blue-950">
       <style>{`
         body::-webkit-scrollbar {
           display: none;
@@ -117,32 +115,17 @@ export default function Home() {
         </div>
       )}
 
-      <NetworkDots isDarkMode={isDarkMode} />
+      <NetworkDots />
       
       {/* Main Content Wrapper with Fade-In / Slide-Up Animation */}
       <div className={`w-full transition-all duration-1000 delay-200 ease-out transform ${fadeOut ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
 
       {/* Navigation Menu */}
-      <nav className="flex items-center justify-between mb-16 border-b border-blue-800/50 pb-4">
-        <div className="flex flex-wrap gap-4 md:gap-8 text-sm md:text-base font-semibold">
-          <a href="#skills" className="text-blue-200 hover:text-orange-500 transition-colors">Skills</a>
-          <a href="#creative" className="text-blue-200 hover:text-orange-500 transition-colors">Creative Work</a>
-          <a href="#projects" className="text-blue-200 hover:text-orange-500 transition-colors">Projects</a>
-          <a href="#certificates" className="text-blue-200 hover:text-orange-500 transition-colors">Certifications</a>
-        </div>
-        
-        {/* Dark/Light Mode Toggle */}
-        <button 
-          onClick={() => setIsDarkMode(!isDarkMode)}
-          className="p-2 ml-4 flex-shrink-0 rounded-full bg-blue-900/40 hover:bg-orange-500 text-blue-200 hover:text-blue-950 transition-colors border border-blue-800 hover:border-orange-500 shadow-sm"
-          aria-label="Toggle Dark Mode"
-        >
-          {isDarkMode ? (
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd"/></svg>
-          ) : (
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
-          )}
-        </button>
+      <nav className="flex flex-wrap gap-4 md:gap-8 mb-16 text-sm md:text-base font-semibold border-b border-blue-800/50 pb-4">
+        <a href="#skills" className="text-blue-200 hover:text-orange-500 transition-colors">Skills</a>
+        <a href="#creative" className="text-blue-200 hover:text-orange-500 transition-colors">Creative Work</a>
+        <a href="#projects" className="text-blue-200 hover:text-orange-500 transition-colors">Projects</a>
+        <a href="#certificates" className="text-blue-200 hover:text-orange-500 transition-colors">Certifications</a>
       </nav>
 
       {/* Header / Hero Section */}
@@ -157,8 +140,9 @@ export default function Home() {
             I also work as a freelance photographer, videographer, and video editor, bringing a strong creative eye and attention to detail to all my technical projects. Welcome to my digital portfolio!
           </p>
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
-            <a href="mailto:your.email@example.com" className="inline-block px-6 py-3 bg-orange-500 hover:bg-orange-600 text-blue-950 font-bold rounded-lg transition-colors shadow-sm">
+            <a href="mailto:urienadriane09@gmail.com" className="group inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-blue-950 font-bold rounded-lg transition-all hover:scale-105 shadow-[0_0_15px_rgba(249,115,22,0.4)] hover:shadow-[0_0_25px_rgba(249,115,22,0.6)]">
               Contact Me
+              <svg className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
             </a>
             <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className="inline-block px-6 py-3 border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-blue-950 font-bold rounded-lg transition-colors shadow-sm">
               View CV
@@ -194,12 +178,23 @@ export default function Home() {
 
       {/* Skills Section */}
       <section id="skills" className="mb-16 pt-8">
-        <h3 className="text-2xl font-semibold mb-4 border-b border-orange-500/30 pb-2">Technical Skills</h3>
-        <div className="flex flex-wrap gap-3">
-          {['JavaScript', 'TypeScript', 'React', 'Next.js', 'Tailwind CSS', 'Git'].map((skill) => (
-            <span key={skill} className="px-4 py-2 bg-blue-900/40 text-blue-100 rounded-full text-sm font-medium border border-blue-800 hover:bg-orange-500/20 hover:border-orange-500/50 transition-colors cursor-default">
-              {skill}
-            </span>
+        <h3 className="text-2xl font-semibold mb-6 border-b border-orange-500/30 pb-2">Technical Skills</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            { title: "Frontend Development", skills: ['JavaScript', 'TypeScript', 'React', 'Next.js', 'Tailwind CSS', 'HTML/CSS'] },
+            { title: "Backend & Cloud", skills: ['Node.js', 'SQL', 'Firebase', 'REST APIs', 'Linux'] },
+            { title: "Tools & Workflow", skills: ['Git', 'GitHub', 'VS Code', 'Figma', 'Vercel'] }
+          ].map((category) => (
+            <div key={category.title} className="bg-blue-950/40 border border-blue-800/40 p-6 rounded-2xl backdrop-blur-sm shadow-sm hover:border-orange-500/30 transition-colors">
+              <h4 className="text-lg font-bold text-orange-400 mb-4">{category.title}</h4>
+              <div className="flex flex-wrap gap-2">
+                {category.skills.map((skill) => (
+                  <span key={skill} className="px-3 py-1.5 bg-blue-900/50 text-blue-100 rounded-lg text-xs font-medium border border-blue-800/30 hover:bg-orange-500/20 hover:text-orange-300 hover:border-orange-500/50 transition-all cursor-default">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       </section>
@@ -252,47 +247,71 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Projects Section */}
       <ProjectsSection />
 
       {/* Certificates Section */}
       <section id="certificates" className="mb-16 pt-8">
         <h3 className="text-2xl font-semibold mb-6 border-b border-orange-500/30 pb-2">Certifications</h3>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {certificatesData.map((cert) => (
             <a
               key={cert.id}
               href={cert.fileUrl}
               onClick={(e) => {
                 e.preventDefault();
-                setSelectedCert({ url: cert.fileUrl, type: cert.type });
+                setSelectedCert({ 
+                  url: cert.thumbnail || cert.fileUrl, 
+                  type: cert.thumbnail ? 'image' : cert.type,
+                  pdfUrl: cert.type === 'pdf' ? cert.fileUrl : undefined
+                });
               }}
               onContextMenu={(e) => e.preventDefault()}
-              className="group flex flex-col overflow-hidden rounded-2xl border border-blue-800/40 bg-blue-950/60 backdrop-blur-sm shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-orange-500/50 hover:bg-blue-900/60 cursor-pointer"
+              className="flex flex-col overflow-hidden rounded-xl border border-blue-800 bg-blue-950/95 shadow-sm transition-all duration-300 hover:border-orange-500/50 hover:shadow-md group cursor-pointer"
             >
               {cert.thumbnail || cert.type === 'image' ? (
-                <div className="relative h-48 overflow-hidden bg-blue-900/20">
-                  <div className="absolute inset-0 bg-blue-950/20 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
-                  <img src={cert.thumbnail || cert.fileUrl} alt={cert.title} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <div className="relative h-48 overflow-hidden bg-blue-900/30 border-b border-blue-800/50">
+                  <img src={cert.thumbnail || cert.fileUrl} alt={cert.title} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
                 </div>
               ) : (
-                <div className="relative flex h-48 items-center justify-center overflow-hidden bg-blue-900/20">
-                  <div className="absolute inset-0 bg-blue-950/20 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
-                  <span className="text-6xl transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3 opacity-80">📄</span>
+                <div className="relative flex h-48 items-center justify-center overflow-hidden bg-blue-900/30 border-b border-blue-800/50">
+                  <span className="text-6xl transition-transform duration-300 group-hover:scale-110">📄</span>
                 </div>
               )}
-              <div className="p-6 flex flex-1 flex-col justify-between">
-                <div>
-                  <span className="inline-block px-2 py-1 mb-3 bg-blue-900/50 text-blue-200 text-xs font-semibold rounded border border-blue-800/30">{cert.issued}</span>
-                  <h4 className="font-bold text-lg text-blue-50 transition-colors duration-300 group-hover:text-orange-400 line-clamp-2">{cert.title}</h4>
-                </div>
-                <span className="mt-4 text-sm font-semibold text-orange-500 flex items-center gap-1 opacity-0 -translate-x-2 transition-all duration-500 group-hover:opacity-100 group-hover:translate-x-0">
-                  View Certificate <span className="transition-transform duration-300 group-hover:translate-x-1">&rarr;</span>
-                </span>
+              <div className="p-4 flex flex-1 items-center justify-center bg-blue-950/40">
+                <h4 className="font-bold text-md text-center text-blue-50 transition-colors group-hover:text-orange-400 line-clamp-2">{cert.title}</h4>
               </div>
             </a>
           ))}
+        </div>
+      </section>
+
+      {/* Contact / CTA Section */}
+      <section id="contact" className="mb-16 pt-8 text-center">
+        <div className="border border-blue-800/40 bg-blue-950/40 backdrop-blur-sm rounded-3xl p-8 md:p-16 shadow-sm max-w-2xl mx-auto relative overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+          <h3 className="text-3xl font-bold mb-4 text-blue-50">Ready to start a project?</h3>
+          <p className="text-blue-200 mb-8 leading-relaxed">
+            Whether you have a specific project in mind, need a freelance developer or creative, or just want to connect, my inbox is always open!
+          </p>
+          <form onSubmit={handleContactSubmit} className="flex flex-col gap-4 text-left mt-8 max-w-xl mx-auto relative z-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-blue-200 mb-1">Name</label>
+                <input type="text" id="name" required className="w-full px-4 py-3 bg-blue-900/20 border border-blue-800/50 rounded-lg text-blue-50 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors" placeholder="John Doe" />
+              </div>
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-blue-200 mb-1">Email</label>
+                <input type="email" id="email" required className="w-full px-4 py-3 bg-blue-900/20 border border-blue-800/50 rounded-lg text-blue-50 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors" placeholder="john@example.com" />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="message" className="block text-sm font-medium text-blue-200 mb-1">Message</label>
+              <textarea id="message" required rows={4} className="w-full px-4 py-3 bg-blue-900/20 border border-blue-800/50 rounded-lg text-blue-50 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors resize-none" placeholder="How can I help you?"></textarea>
+            </div>
+            <button type="submit" disabled={isSubmitting || isSubmitted} className="group inline-flex justify-center items-center gap-2 px-8 py-4 mt-4 bg-orange-500 hover:bg-orange-600 disabled:bg-blue-800 disabled:text-blue-300 text-blue-950 text-lg font-bold rounded-xl transition-all hover:-translate-y-1 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.5)] disabled:shadow-none disabled:hover:translate-y-0 w-full sm:w-auto self-center">
+              {isSubmitting ? 'Sending...' : isSubmitted ? 'Message Sent! ✅' : 'Send Message 🚀'}
+            </button>
+          </form>
         </div>
       </section>
 
@@ -309,7 +328,14 @@ export default function Home() {
           <div className="relative w-full max-w-5xl h-[80vh] sm:h-[90vh] bg-blue-950 rounded-xl border border-blue-800 flex flex-col overflow-hidden shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center p-4 border-b border-blue-800 bg-blue-900/50">
               <h3 className="text-white font-bold">Certificate Preview</h3>
-              <button onClick={() => setSelectedCert(null)} className="text-blue-200 hover:text-orange-500 font-bold text-2xl leading-none">&times;</button>
+              <div className="flex items-center gap-4">
+                {selectedCert.pdfUrl && (
+                  <a href={`${selectedCert.pdfUrl}#toolbar=0`} target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:text-orange-400 text-sm font-semibold transition-colors">
+                    Open PDF &rarr;
+                  </a>
+                )}
+                <button onClick={() => setSelectedCert(null)} className="text-blue-200 hover:text-orange-500 font-bold text-2xl leading-none">&times;</button>
+              </div>
             </div>
             <div className="flex-1 w-full h-full bg-blue-950/90 relative flex items-center justify-center overflow-hidden">
               {selectedCert.type === 'pdf' ? (
@@ -322,6 +348,16 @@ export default function Home() {
         </div>
       )}
 
+      {/* Back to Top Button */}
+      <button
+        onClick={scrollToTop}
+        className={`fixed bottom-8 right-8 p-3 bg-orange-500 text-blue-950 rounded-full shadow-[0_0_15px_rgba(249,115,22,0.4)] transition-all duration-300 z-50 ${showBackToTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'} hover:bg-orange-600 hover:scale-110`}
+        aria-label="Back to top"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 15l7-7 7 7" />
+        </svg>
+      </button>
     </main>
   );
 }
