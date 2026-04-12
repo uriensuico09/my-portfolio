@@ -302,15 +302,19 @@ export default function Home() {
       {/* Creative Work Section */}
       <section id="creative" className="mb-16 pt-8">
         <h3 className="text-2xl font-semibold mb-6 border-b border-orange-500/30 pb-2">Creative Experience</h3>
-        <div className="border border-blue-800 p-6 sm:p-8 rounded-2xl shadow-sm bg-blue-950/95 hover:border-orange-500/50 transition-all duration-500 group relative overflow-hidden">
+        <div className="border border-blue-800 p-6 sm:p-8 rounded-2xl shadow-sm bg-blue-950/95 hover:border-orange-500/50 transition-all duration-500 group/card relative overflow-hidden">
           {/* Subtle background glow */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl -z-10 group-hover:bg-orange-500/10 transition-colors duration-500 pointer-events-none"></div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl -z-10 group-hover/card:bg-orange-500/10 transition-colors duration-500 pointer-events-none"></div>
           
-          <div className="flex flex-col md:flex-row gap-8 items-center">
+          <div className="flex flex-col md:flex-row-reverse gap-8 items-center">
             {/* Text & Skills Content */}
             <div className="flex-1 flex flex-col justify-center">
               <h4 className="font-bold text-xl md:text-2xl mb-3 text-blue-50 flex items-center gap-3">
+<<<<<<< HEAD
+                <span className="text-3xl">📸</span> Freelancer Visual Creative
+=======
                 <span className="text-3xl">📸</span> Freelance Visual Creative
+>>>>>>> 1159a38325f5002bbdc3ab87cd04a615c3b5583e
               </h4>
               <p className="text-blue-200 text-sm sm:text-base leading-relaxed mb-6 text-justify">
                 Alongside my IT studies, I have extensive experience in visual storytelling. I shoot, direct, and edit high-quality photo and video content for clients. This creative background gives me a unique perspective on UI/UX design and digital media.
@@ -327,6 +331,47 @@ export default function Home() {
               </div>
             </div>
             
+<<<<<<< HEAD
+            {/* All Media Section */}
+            <div className="flex-1 w-full flex flex-col gap-3 sm:gap-4 relative z-10">
+              {/* Top Media Grid */}
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                <div 
+                  className="relative overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300 cursor-pointer group"
+                  onClick={() => setSelectedPhotoIndex(0)}
+                >
+                  <img src="/creative-1.jpg" alt="Creative work 1" loading="lazy" className="w-full h-48 sm:h-64 object-cover hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-blue-950/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
+                    <svg className="w-10 h-10 text-orange-500 transform scale-50 group-hover:scale-100 transition-transform duration-300 ease-out" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300">
+                  <video autoPlay loop muted playsInline className="w-full h-48 sm:h-64 object-cover hover:scale-110 transition-transform duration-700">
+                    <source src="/creative-video.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              </div>
+
+              {/* Bottom Photo Gallery Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                {creativeImagesData.map((img, index) => (
+                  <div 
+                    key={img.id} 
+                    className="relative overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300 cursor-pointer group"
+                    onClick={() => setSelectedPhotoIndex(index)}
+                  >
+                    <img src={img.src} alt={img.alt} loading="lazy" className="w-full h-24 sm:h-32 object-cover hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-blue-950/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
+                      <svg className="w-6 h-6 text-orange-500 transform scale-50 group-hover:scale-100 transition-transform duration-300 ease-out" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                      </svg>
+                    </div>
+                  </div>
+                ))}
+=======
             {/* Asymmetric Image Grid */}
             <div className="flex-1 w-full grid grid-cols-2 gap-3 sm:gap-4 relative z-10">
               <div className="overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300">
@@ -334,6 +379,7 @@ export default function Home() {
               </div>
               <div className="overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300 mt-6 sm:mt-10">
                 <img src="/creative-2.jpg" alt="Creative work 2" loading="lazy" className="w-full h-48 sm:h-64 object-cover hover:scale-110 transition-transform duration-700" />
+>>>>>>> 1159a38325f5002bbdc3ab87cd04a615c3b5583e
               </div>
             </div>
           </div>
