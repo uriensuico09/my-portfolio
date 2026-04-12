@@ -19,8 +19,8 @@ export default function ProjectsSection() {
     <section id="projects" className="mb-16 pt-8">
       <h3 className="text-2xl font-semibold mb-6 border-b border-orange-500/30 pb-2">Featured Projects</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-        {projectsData.map((project) => (
-          <div key={project.id} className="group flex flex-col border border-blue-800/40 bg-blue-950/40 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-orange-500/50 hover:bg-blue-900/40">
+        {projectsData.map((project, index) => (
+          <div key={project.id} className="group flex flex-col border border-blue-800/40 bg-blue-950/40 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-orange-500/50 hover:bg-blue-900/40 reveal-on-scroll" style={{ animationDelay: `${index * 150}ms` }}>
             <div className="relative h-48 overflow-hidden bg-blue-900/20">
               <div className="absolute inset-0 bg-blue-950/20 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
               <Image src={project.image} alt={project.title} width={600} height={400} unoptimized={project.image.startsWith('http')} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />

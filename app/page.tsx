@@ -1,43 +1,22 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
 import NetworkDots from "./NetworkDots";
 import ProjectsSection from "./ProjectsSection";
-
-const certificatesData = [
-  { id: 1, title: "Blockchain Developer Training", issued: " 2026", type: "pdf", fileUrl: "/certificates/1.pdf", thumbnail: "/certificates/1-thumbnail.jpg" },
-  { id: 3, title: "GETTING STARTED WITH FULL STACK JAVA DEVELOPER", issued: " 2026", type: "pdf", fileUrl: "/certificates/3.pdf", thumbnail: "/certificates/3-thumbnail.jpg" },
-  { id: 2, title: "Introduction to Cybersecurity", issued: "2026", type: "pdf", fileUrl: "/certificates/2.pdf", thumbnail: "/certificates/2-thumbnail.jpg" },
-  { id: 4, title: "C++ Essentials 1", issued: "2026", type: "pdf", fileUrl: "/certificates/4.pdf", thumbnail: "/certificates/4-thumbnail.jpg" },
-  { id: 5, title: "JavaScript Essentials 1", issued: "2026", type: "pdf", fileUrl: "/certificates/5.pdf", thumbnail: "/certificates/5-thumbnail.jpg" },
-  { id: 6, title: "Networking Basics", issued: "2026", type: "pdf", fileUrl: "/certificates/6.pdf", thumbnail: "/certificates/6-thumbnail.jpg" },
-  { id: 7, title: "Python and Flask Frameworks", issued: "2026", type: "pdf", fileUrl: "/certificates/7.pdf", thumbnail: "/certificates/7-thumbnail.jpg" },
-  { id: 8, title: "Python for Beginners", issued: "2026", type: "pdf", fileUrl: "/certificates/8.pdf", thumbnail: "/certificates/8-thumbnail.jpg" },
-  { id: 9, title: "Python 101 for Data Science", issued: "2026", type: "jpg", fileUrl: "/certificates/9.jpg", thumbnail: "/certificates/9.jpg" },
-  { id: 10, title: "Certificate 10", issued: "2026", type: "pdf", fileUrl: "/certificates/10.pdf", thumbnail: "/certificates/10-thumbnail.jpg" },
-];
-
-const creativeImagesData = [
-  { id: 1, src: "/creative-1.jpg", alt: "Creative work 1" },
-  { id: 2, src: "/creative-2.jpg", alt: "Creative work 2" },
-  { id: 3, src: "/creative-3.jpg", alt: "Creative work 3" },
-  { id: 4, src: "/creative-4.jpg", alt: "Creative work 4" },
-];
+import HeroSection from "./HeroSection";
+import AboutSection from "./AboutSection";
+import SkillsSection from "./SkillsSection";
+import CreativeSection from "./CreativeSection";
+import CertificatesSection from "./CertificatesSection";
+import ContactSection from "./ContactSection";
 
 const fullName = "Urien Adriane O. Suico";
 
 export default function Home() {
-  const [selectedCert, setSelectedCert] = useState<{url: string, type: string, pdfUrl?: string} | null>(null);
-  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
   const [typedName, setTypedName] = useState("");
   const [showBackToTop, setShowBackToTop] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isHoveringCert, setIsHoveringCert] = useState(false);
 
   useEffect(() => {
     // Start fade out after 2 seconds
@@ -82,23 +61,6 @@ export default function Home() {
     };
   }, []);
 
-  // Accessibility: Close modal on 'Escape' key press
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setSelectedCert(null);
-        setSelectedPhotoIndex(null);
-      } else if (e.key === 'ArrowRight' && selectedPhotoIndex !== null) {
-        setSelectedPhotoIndex((prev) => prev !== null ? (prev + 1) % creativeImagesData.length : null);
-      } else if (e.key === 'ArrowLeft' && selectedPhotoIndex !== null) {
-        setSelectedPhotoIndex((prev) => prev !== null ? (prev - 1 + creativeImagesData.length) % creativeImagesData.length : null);
-      }
-    };
-    if (selectedCert || selectedPhotoIndex !== null) window.addEventListener('keydown', handleKeyDown);
-    
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedCert, selectedPhotoIndex]);
-
   // Monitor scroll position for the Back to Top button
   useEffect(() => {
     const handleScroll = () => {
@@ -108,39 +70,30 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Intersection Observer for scroll animations
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    const timeoutId = setTimeout(() => {
+      const hiddenElements = document.querySelectorAll('.reveal-on-scroll');
+      hiddenElements.forEach((el) => observer.observe(el));
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      observer.disconnect();
+    };
+  }, [isLoading]);
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-    formData.append("access_key", "29cda32f-e4df-413d-9e7a-6ff0df3cd726");
-
-    try {
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setIsSubmitted(true);
-        form.reset(); // Clear the form fields after sending
-        setTimeout(() => setIsSubmitted(false), 5000); // Reset after 5 seconds
-      } else {
-        alert("Error: " + data.message);
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   return (
@@ -181,6 +134,17 @@ export default function Home() {
           mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
           -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
         }
+      @keyframes scrollReveal {
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .reveal-on-scroll {
+        opacity: 0;
+        will-change: opacity, transform;
+      }
+      .reveal-on-scroll.is-revealed {
+        animation: scrollReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
       `}</style>
 
       {/* Animated Loading Splash Screen */}
@@ -204,367 +168,23 @@ export default function Home() {
 
       {/* Navigation Menu */}
       <nav className="flex flex-wrap gap-3 sm:gap-4 md:gap-8 justify-center md:justify-start mb-12 md:mb-16 text-sm md:text-base font-semibold border-b border-blue-800/50 pb-4">
-        <a href="#about" className="text-blue-200 hover:text-orange-500 transition-colors">About</a>
-        <a href="#skills" className="text-blue-200 hover:text-orange-500 transition-colors">Skills</a>
         <a href="#creative" className="text-blue-200 hover:text-orange-500 transition-colors">Creative Work</a>
         <a href="#projects" className="text-blue-200 hover:text-orange-500 transition-colors">Projects</a>
         <a href="#certificates" className="text-blue-200 hover:text-orange-500 transition-colors">Certifications</a>
         <a href="#contact" className="text-blue-200 hover:text-orange-500 transition-colors">Contact</a>
       </nav>
 
-      {/* Header / Hero Section */}
-      <section className="mb-12 md:mb-16 flex flex-col-reverse md:flex-row items-center gap-8 md:gap-12 mt-4 md:mt-0">
-        <div className="flex-1 text-center md:text-left">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4 min-h-[108px] sm:min-h-20 md:min-h-12">
-            Hello, I&apos;m <span className="text-orange-500">{typedName}<span className="animate-pulse font-light text-orange-400">|</span></span>
-          </h1>
-          <h2 className="text-lg sm:text-xl text-blue-200 mb-4 sm:mb-6">IT Student & Aspiring Web Developer</h2>
-          <p className="text-sm sm:text-base text-blue-100 leading-relaxed mb-6 text-justify">
-            I am a passionate IT student focusing on frontend development, cloud infrastructure, and building great user experiences. 
-            I also work as a freelance photographer, videographer, and video editor, bringing a strong creative eye and attention to detail to all my technical projects. Welcome to my digital portfolio!
-          </p>
-          <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
-            <a href="#contact" className="group inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-blue-950 font-bold rounded-lg transition-all hover:scale-105 shadow-[0_0_15px_rgba(249,115,22,0.4)] hover:shadow-[0_0_25px_rgba(249,115,22,0.6)]">
-              Contact Me
-              <svg className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
-            </a>
-            <a href="/resume (2).pdf" target="_blank" rel="noopener noreferrer" className="inline-block px-6 py-3 border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-blue-950 font-bold rounded-lg transition-colors shadow-sm">
-              View CV
-            </a>
-            <a href="https://github.com/uriensuico09" target="_blank" rel="noopener noreferrer" className="p-3 bg-blue-900/40 hover:bg-orange-500 hover:text-blue-950 text-blue-200 rounded-lg transition-all border border-blue-800 hover:border-orange-500 shadow-sm" aria-label="GitHub">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
-              </svg>
-            </a>
-            <a href="https://www.facebook.com/urienadriane.suico/" target="_blank" rel="noopener noreferrer" className="p-3 bg-blue-900/40 hover:bg-orange-500 hover:text-blue-950 text-blue-200 rounded-lg transition-all border border-blue-800 hover:border-orange-500 shadow-sm" aria-label="Facebook">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" />
-              </svg>
-            </a>
-            <a href="mailto:urienadriane09@gmail.com" className="p-3 bg-blue-900/40 hover:bg-orange-500 hover:text-blue-950 text-blue-200 rounded-lg transition-all border border-blue-800 hover:border-orange-500 shadow-sm" aria-label="Gmail">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" />
-                <path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" />
-              </svg>
-            </a>
-          </div>
-        </div>
-        <div className="w-48 h-48 md:w-64 md:h-64 flex-shrink-0 relative group">
-          {/* Subtle glowing effect behind the image */}
-          <div className="absolute inset-0 bg-orange-500 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500 animate-pulse"></div>
-          <Image 
-            src="/profile.png" 
-            alt="Urien Adriane O. Suico" 
-            width={256}
-            height={256}
-            priority
-            className="w-full h-full object-cover rounded-full border-4 border-blue-800 shadow-xl relative z-10 transition-transform duration-500 group-hover:scale-105 group-hover:-rotate-2"
-          />
-        </div>
-      </section>
-
-      {/* About Me Section */}
-      <section id="about" className="mb-16 pt-8">
-        <h3 className="text-2xl font-semibold mb-6 border-b border-orange-500/30 pb-2">About Me</h3>
-        <div className="bg-blue-950/40 border border-blue-800/40 p-6 sm:p-8 rounded-2xl backdrop-blur-sm shadow-sm hover:border-orange-500/30 transition-colors">
-          <p className="text-blue-200 leading-relaxed mb-4 text-sm sm:text-base md:text-lg text-justify">
-            Hello! I am a dedicated IT student with a strong passion for crafting clean, intuitive, and dynamic digital experiences. My journey into technology started with a fascination for how things work under the hood, which quickly evolved into a love for frontend development, web design, and system architecture.
-          </p>
-          <p className="text-blue-200 leading-relaxed text-sm sm:text-base md:text-lg text-justify">
-            When I&apos;m not writing code or studying, you can usually find me exploring my creative side through photography and videography. I believe that having a strong visual eye helps me build better, more engaging user interfaces. I am constantly learning new technologies and am always looking for exciting opportunities to collaborate and grow!
-          </p>
-        </div>
-      </section>
-
-      {/* Skills Section */}
-      <section id="skills" className="mb-16 pt-8">
-        <h3 className="text-2xl font-semibold mb-6 border-b border-orange-500/30 pb-2">Technical Skills</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[
-            { title: "Frontend Development", skills: ['JavaScript', 'TypeScript', 'React', 'Next.js', 'Tailwind CSS', 'HTML/CSS'] },
-            { title: "Backend & Cloud", skills: ['Node.js', 'SQL', 'Firebase'] },
-            { title: "Tools & Workflow", skills: ['Git', 'GitHub', 'VS Code', 'Figma', 'Vercel'] }
-          ].map((category) => (
-            <div key={category.title} className="bg-blue-950/40 border border-blue-800/40 p-6 rounded-2xl backdrop-blur-sm shadow-sm hover:border-orange-500/30 transition-colors">
-              <h4 className="text-lg font-bold text-orange-400 mb-4">{category.title}</h4>
-              <div className="flex flex-wrap gap-2">
-                {category.skills.map((skill) => (
-                  <span key={skill} className="px-3 py-1.5 bg-blue-900/50 text-blue-100 rounded-lg text-xs font-medium border border-blue-800/30 hover:bg-orange-500/20 hover:text-orange-300 hover:border-orange-500/50 transition-all cursor-default">
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Creative Work Section */}
-      <section id="creative" className="mb-16 pt-8">
-        <h3 className="text-2xl font-semibold mb-6 border-b border-orange-500/30 pb-2">Creative Experience</h3>
-        <div className="border border-blue-800 p-6 sm:p-8 rounded-2xl shadow-sm bg-blue-950/95 hover:border-orange-500/50 transition-all duration-500 group/card relative overflow-hidden">
-          {/* Subtle background glow */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl -z-10 group-hover/card:bg-orange-500/10 transition-colors duration-500 pointer-events-none"></div>
-          
-          <div className="flex flex-col md:flex-row-reverse gap-8 items-center">
-            {/* Text & Skills Content */}
-            <div className="flex-1 flex flex-col justify-center">
-              <h4 className="font-bold text-xl md:text-2xl mb-3 text-blue-50 flex items-center gap-3">
-<<<<<<< HEAD
-                <span className="text-3xl">📸</span> Freelancer Visual Creative
-=======
-                <span className="text-3xl">📸</span> Freelance Visual Creative
->>>>>>> 1159a38325f5002bbdc3ab87cd04a615c3b5583e
-              </h4>
-              <p className="text-blue-200 text-sm sm:text-base leading-relaxed mb-6 text-justify">
-                Alongside my IT studies, I have extensive experience in visual storytelling. I shoot, direct, and edit high-quality photo and video content for clients. This creative background gives me a unique perspective on UI/UX design and digital media.
-              </p>
-              <div className="flex flex-wrap gap-2 mb-8">
-                {['Photography', 'Videography','Drone Pilot', 'Premiere Pro','Photoshop', 'After Effects', 'Lightroom'].map((skill) => (
-                  <span key={skill} className="px-3 py-1.5 bg-blue-900/40 text-orange-400 rounded-lg text-xs font-semibold border border-blue-800/50">{skill}</span>
-                ))}
-              </div>
-              <div>
-                <a href="https://www.facebook.com/profile.php?id=100091884375823" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-blue-950 text-sm font-bold rounded-lg transition-colors shadow-sm">
-                  View on Facebook <span className="text-lg leading-none">&rarr;</span>
-                </a>
-              </div>
-            </div>
-            
-<<<<<<< HEAD
-            {/* All Media Section */}
-            <div className="flex-1 w-full flex flex-col gap-3 sm:gap-4 relative z-10">
-              {/* Top Media Grid */}
-              <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                <div 
-                  className="relative overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300 cursor-pointer group"
-                  onClick={() => setSelectedPhotoIndex(0)}
-                >
-                  <img src="/creative-1.jpg" alt="Creative work 1" loading="lazy" className="w-full h-48 sm:h-64 object-cover hover:scale-110 transition-transform duration-700" />
-                  <div className="absolute inset-0 bg-blue-950/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
-                    <svg className="w-10 h-10 text-orange-500 transform scale-50 group-hover:scale-100 transition-transform duration-300 ease-out" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300">
-                  <video autoPlay loop muted playsInline className="w-full h-48 sm:h-64 object-cover hover:scale-110 transition-transform duration-700">
-                    <source src="/creative-video.mp4" type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-                </div>
-              </div>
-
-              {/* Bottom Photo Gallery Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                {creativeImagesData.map((img, index) => (
-                  <div 
-                    key={img.id} 
-                    className="relative overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300 cursor-pointer group"
-                    onClick={() => setSelectedPhotoIndex(index)}
-                  >
-                    <img src={img.src} alt={img.alt} loading="lazy" className="w-full h-24 sm:h-32 object-cover hover:scale-110 transition-transform duration-700" />
-                    <div className="absolute inset-0 bg-blue-950/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
-                      <svg className="w-6 h-6 text-orange-500 transform scale-50 group-hover:scale-100 transition-transform duration-300 ease-out" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                      </svg>
-                    </div>
-                  </div>
-                ))}
-=======
-            {/* Asymmetric Image Grid */}
-            <div className="flex-1 w-full grid grid-cols-2 gap-3 sm:gap-4 relative z-10">
-              <div className="overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300">
-                <img src="/creative-1.jpg" alt="Creative work 1" loading="lazy" className="w-full h-48 sm:h-64 object-cover hover:scale-110 transition-transform duration-700" />
-              </div>
-              <div className="overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300 mt-6 sm:mt-10">
-                <img src="/creative-2.jpg" alt="Creative work 2" loading="lazy" className="w-full h-48 sm:h-64 object-cover hover:scale-110 transition-transform duration-700" />
->>>>>>> 1159a38325f5002bbdc3ab87cd04a615c3b5583e
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      <HeroSection typedName={typedName} />
+      <AboutSection />
+      <SkillsSection />
+      <CreativeSection />
       <ProjectsSection />
-
-      {/* Certificates Section */}
-      <section id="certificates" className="mb-16 pt-8">
-        <h3 className="text-2xl font-semibold mb-6 border-b border-orange-500/30 pb-2">Certifications</h3>
-        <div className="relative w-full overflow-hidden mask-edges py-4 group/marquee">
-          <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
-            {/* First Set */}
-            <div className="flex gap-6 pr-6">
-              {certificatesData.map((cert) => (
-                <a
-                  key={cert.id}
-                  href={cert.fileUrl}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setSelectedCert({ 
-                      url: cert.thumbnail || cert.fileUrl, 
-                      type: cert.thumbnail ? 'image' : cert.type,
-                      pdfUrl: cert.type === 'pdf' ? cert.fileUrl : undefined
-                    });
-                  }}
-                  onContextMenu={(e) => e.preventDefault()}
-                  onMouseEnter={() => setIsHoveringCert(true)}
-                  onMouseLeave={() => setIsHoveringCert(false)}
-                  onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
-                  className="relative w-56 sm:w-80 flex-shrink-0 flex flex-col overflow-hidden rounded-xl border border-blue-800 bg-blue-950/95 shadow-sm transition-all duration-500 hover:border-orange-500 hover:shadow-[0_0_20px_rgba(249,115,22,0.4)] hover:-translate-y-2 group cursor-pointer opacity-100 md:group-hover/marquee:opacity-40 hover:!opacity-100"
-                >
-                  {cert.thumbnail || cert.type === 'image' ? (
-                    <div className="relative h-36 sm:h-48 overflow-hidden bg-blue-900/30 border-b border-blue-800/50">
-                      <Image src={cert.thumbnail || cert.fileUrl} alt={cert.title} width={320} height={240} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                    </div>
-                  ) : (
-                    <div className="relative flex h-36 sm:h-48 items-center justify-center overflow-hidden bg-blue-900/30 border-b border-blue-800/50">
-                      <span className="text-6xl transition-transform duration-500 group-hover:scale-110">📄</span>
-                    </div>
-                  )}
-                  <div className="p-4 flex flex-1 items-center justify-center bg-blue-950/40">
-                    <h4 className="font-bold text-sm sm:text-md text-center text-blue-50 transition-colors group-hover:text-orange-400 line-clamp-2">{cert.title}</h4>
-                  </div>
-                </a>
-              ))}
-            </div>
-            {/* Second Set for seamless infinite scrolling */}
-            <div className="flex gap-6 pr-6" aria-hidden="true">
-              {certificatesData.map((cert) => (
-                <a
-                  key={`${cert.id}-duplicate`}
-                  href={cert.fileUrl}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setSelectedCert({ 
-                      url: cert.thumbnail || cert.fileUrl, 
-                      type: cert.thumbnail ? 'image' : cert.type,
-                      pdfUrl: cert.type === 'pdf' ? cert.fileUrl : undefined
-                    });
-                  }}
-                  onContextMenu={(e) => e.preventDefault()}
-                  onMouseEnter={() => setIsHoveringCert(true)}
-                  onMouseLeave={() => setIsHoveringCert(false)}
-                  onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
-                  className="relative w-56 sm:w-80 flex-shrink-0 flex flex-col overflow-hidden rounded-xl border border-blue-800 bg-blue-950/95 shadow-sm transition-all duration-500 hover:border-orange-500 hover:shadow-[0_0_20px_rgba(249,115,22,0.4)] hover:-translate-y-2 group cursor-pointer opacity-100 md:group-hover/marquee:opacity-40 hover:!opacity-100"
-                >
-                  {cert.thumbnail || cert.type === 'image' ? (
-                    <div className="relative h-36 sm:h-48 overflow-hidden bg-blue-900/30 border-b border-blue-800/50">
-                      <Image src={cert.thumbnail || cert.fileUrl} alt={cert.title} width={320} height={240} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                    </div>
-                  ) : (
-                    <div className="relative flex h-36 sm:h-48 items-center justify-center overflow-hidden bg-blue-900/30 border-b border-blue-800/50">
-                      <span className="text-6xl transition-transform duration-500 group-hover:scale-110">📄</span>
-                    </div>
-                  )}
-                  <div className="p-4 flex flex-1 items-center justify-center bg-blue-950/40">
-                    <h4 className="font-bold text-sm sm:text-md text-center text-blue-50 transition-colors group-hover:text-orange-400 line-clamp-2">{cert.title}</h4>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact / CTA Section */}
-      <section id="contact" className="mb-16 pt-8 text-center">
-        <div className="border border-blue-800/40 bg-blue-950/40 backdrop-blur-sm rounded-3xl p-6 sm:p-8 md:p-16 shadow-sm max-w-2xl mx-auto relative overflow-hidden">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl -z-10 pointer-events-none"></div>
-          <h3 className="text-2xl md:text-3xl font-bold mb-4 text-blue-50">Ready to start a project?</h3>
-          <p className="text-sm md:text-base text-blue-200 mb-8 leading-relaxed text-justify">
-            Whether you have a specific project in mind, need a freelance developer or creative, or just want to connect, my inbox is always open!
-          </p>
-          <form onSubmit={handleContactSubmit} className="flex flex-col gap-4 text-left mt-8 max-w-xl mx-auto relative z-10">
-            {/* Honeypot spam protection */}
-            <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-blue-200 mb-1">Name</label>
-                <input type="text" id="name" name="name" required className="w-full px-4 py-3 bg-blue-900/20 border border-blue-800/50 rounded-lg text-blue-50 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors" placeholder="John Doe" />
-              </div>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-blue-200 mb-1">Email</label>
-                <input type="email" id="email" name="email" required className="w-full px-4 py-3 bg-blue-900/20 border border-blue-800/50 rounded-lg text-blue-50 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors" placeholder="john@example.com" />
-              </div>
-            </div>
-            <div>
-              <label htmlFor="message" className="block text-sm font-medium text-blue-200 mb-1">Message</label>
-              <textarea id="message" name="message" required rows={4} className="w-full px-4 py-3 bg-blue-900/20 border border-blue-800/50 rounded-lg text-blue-50 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors resize-none" placeholder="How can I help you?"></textarea>
-            </div>
-            <button type="submit" disabled={isSubmitting || isSubmitted} className="group inline-flex justify-center items-center gap-2 px-8 py-4 mt-4 bg-orange-500 hover:bg-orange-600 disabled:bg-blue-800 disabled:text-blue-300 text-blue-950 text-lg font-bold rounded-xl transition-all hover:-translate-y-1 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.5)] disabled:shadow-none disabled:hover:translate-y-0 w-full sm:w-auto self-center">
-              {isSubmitting ? 'Sending...' : isSubmitted ? 'Message Sent! ✅' : 'Send Message 🚀'}
-            </button>
-          </form>
-        </div>
-      </section>
-
+      <CertificatesSection />
+      <ContactSection />
       {/* Footer */}
       <footer className="text-center py-8 text-blue-300 text-sm border-t border-blue-800/50 mt-16">
         <p>&copy; {new Date().getFullYear()} Urien Adriane O. Suico. All rights reserved.</p>
       </footer>
-
-      </div>
-
-      {/* Certificate Viewer Modal */}
-      {selectedCert && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 sm:p-8 backdrop-blur-sm" onClick={() => setSelectedCert(null)} onContextMenu={(e) => e.preventDefault()} role="dialog" aria-modal="true" aria-labelledby="modal-title">
-          <div className="relative w-full max-w-5xl h-[80vh] sm:h-[90vh] bg-blue-950 rounded-xl border border-blue-800 flex flex-col overflow-hidden shadow-2xl" onClick={(e) => e.stopPropagation()} role="document">
-            <div className="flex justify-between items-center p-4 border-b border-blue-800 bg-blue-900/50">
-              <h3 id="modal-title" className="text-white font-bold">Certificate Preview</h3>
-              <div className="flex items-center gap-4">
-                {selectedCert.pdfUrl && (
-                  <a href={`${selectedCert.pdfUrl}#toolbar=0`} target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:text-orange-400 text-sm font-semibold transition-colors">
-                    Open PDF &rarr;
-                  </a>
-                )}
-                <button type="button" onClick={() => setSelectedCert(null)} className="text-blue-200 hover:text-orange-500 font-bold text-2xl leading-none">&times;</button>
-              </div>
-            </div>
-            <div className="flex-1 w-full h-full bg-blue-950/90 relative flex items-center justify-center overflow-hidden">
-              {selectedCert.type === 'pdf' ? (
-                <iframe src={`${selectedCert.url}#toolbar=0&view=FitH`} title="Certificate PDF Viewer" className="w-full h-full border-none bg-white" />
-              ) : (
-                <Image src={selectedCert.url} alt="Certificate Preview" fill className="object-contain p-2" unoptimized />
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Photography Lightbox Modal */}
-      {selectedPhotoIndex !== null && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/90 p-4 sm:p-8 backdrop-blur-md transition-opacity duration-300" onClick={() => setSelectedPhotoIndex(null)} role="dialog" aria-modal="true" aria-label="Image gallery lightbox">
-          <button type="button" onClick={() => setSelectedPhotoIndex(null)} className="absolute top-6 right-6 sm:top-8 sm:right-8 text-blue-200 hover:text-orange-500 font-bold text-4xl leading-none z-10 transition-colors drop-shadow-lg" aria-label="Close lightbox">&times;</button>
-          
-          {/* Previous Button */}
-          <button type="button" onClick={(e) => { e.stopPropagation(); setSelectedPhotoIndex((selectedPhotoIndex - 1 + creativeImagesData.length) % creativeImagesData.length); }} className="absolute left-2 sm:left-8 p-2 text-blue-200 hover:text-orange-500 font-bold text-5xl sm:text-7xl z-10 transition-transform hover:-translate-x-2 drop-shadow-lg focus:outline-none" aria-label="Previous photo">&#8249;</button>
-          
-          {/* Next Button */}
-          <button type="button" onClick={(e) => { e.stopPropagation(); setSelectedPhotoIndex((selectedPhotoIndex + 1) % creativeImagesData.length); }} className="absolute right-2 sm:right-8 p-2 text-blue-200 hover:text-orange-500 font-bold text-5xl sm:text-7xl z-10 transition-transform hover:translate-x-2 drop-shadow-lg focus:outline-none" aria-label="Next photo">&#8250;</button>
-
-          {/* The onClick stopPropagation prevents closing the modal when clicking the image itself */}
-          <div className="relative w-full max-w-5xl h-[70vh] sm:h-[85vh] flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
-            <Image src={creativeImagesData[selectedPhotoIndex].src} alt={creativeImagesData[selectedPhotoIndex].alt} fill className="object-contain drop-shadow-2xl transition-all duration-300" unoptimized />
-          </div>
-          
-          {/* Image Counter */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-blue-200 text-sm font-semibold tracking-widest z-10 drop-shadow-md">
-            {selectedPhotoIndex + 1} / {creativeImagesData.length}
-          </div>
-        </div>
-      )}
-
-      {/* Custom Mouse Follower Tooltip */}
-      <div 
-        className={`hidden md:block fixed pointer-events-none z-[60] px-3 py-1.5 bg-orange-500 text-blue-950 text-sm font-bold rounded-md shadow-[0_0_15px_rgba(249,115,22,0.4)] transition-opacity duration-200 ${isHoveringCert && !selectedCert ? 'opacity-100' : 'opacity-0'}`}
-        style={{ 
-          left: `${mousePos.x + 15}px`, 
-          top: `${mousePos.y + 15}px`,
-        }}
-        aria-hidden="true"
-      >
-        Click to expand
       </div>
 
       {/* Back to Top Button */}
