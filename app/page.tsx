@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import NetworkDots from "./NetworkDots";
 import ProjectsSection from "./ProjectsSection";
 
@@ -17,15 +18,26 @@ const certificatesData = [
   { id: 10, title: "Certificate 10", issued: "2026", type: "pdf", fileUrl: "/certificates/10.pdf", thumbnail: "/certificates/10-thumbnail.jpg" },
 ];
 
+const creativeImagesData = [
+  { id: 1, src: "/creative-1.jpg", alt: "Creative work 1" },
+  { id: 2, src: "/creative-2.jpg", alt: "Creative work 2" },
+  { id: 3, src: "/creative-3.jpg", alt: "Creative work 3" },
+  { id: 4, src: "/creative-4.jpg", alt: "Creative work 4" },
+];
+
+const fullName = "Urien Adriane O. Suico";
+
 export default function Home() {
   const [selectedCert, setSelectedCert] = useState<{url: string, type: string, pdfUrl?: string} | null>(null);
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
   const [typedName, setTypedName] = useState("");
-  const fullName = "Urien Adriane O. Suico";
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isHoveringCert, setIsHoveringCert] = useState(false);
 
   useEffect(() => {
     // Start fade out after 2 seconds
@@ -38,33 +50,54 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    let typingInterval: NodeJS.Timeout;
+    let timeoutId: NodeJS.Timeout;
+    let i = 0;
+    let isDeleting = false;
+
+    const type = () => {
+      setTypedName(fullName.slice(0, i));
+
+      let typeSpeed = isDeleting ? 50 : 100; // Type at 100ms, delete faster at 50ms
+
+      if (!isDeleting && i === fullName.length) {
+        typeSpeed = 2000; // Pause for 2 seconds at the end before deleting
+        isDeleting = true;
+      } else if (isDeleting && i === 0) {
+        isDeleting = false;
+        typeSpeed = 500; // Pause for half a second before typing again
+      } else {
+        i = isDeleting ? i - 1 : i + 1;
+      }
+
+      timeoutId = setTimeout(type, typeSpeed);
+    };
+
     const timer = setTimeout(() => {
-      let i = 0;
-      typingInterval = setInterval(() => {
-        setTypedName(fullName.slice(0, i + 1));
-        i++;
-        if (i >= fullName.length) {
-          clearInterval(typingInterval);
-        }
-      }, 100); // Typing speed in milliseconds
+      type();
     }, 2400); // Delays the start so it waits for the loading screen to finish
 
     return () => {
       clearTimeout(timer);
-      clearInterval(typingInterval);
+      clearTimeout(timeoutId);
     };
   }, []);
 
   // Accessibility: Close modal on 'Escape' key press
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setSelectedCert(null);
+      if (e.key === 'Escape') {
+        setSelectedCert(null);
+        setSelectedPhotoIndex(null);
+      } else if (e.key === 'ArrowRight' && selectedPhotoIndex !== null) {
+        setSelectedPhotoIndex((prev) => prev !== null ? (prev + 1) % creativeImagesData.length : null);
+      } else if (e.key === 'ArrowLeft' && selectedPhotoIndex !== null) {
+        setSelectedPhotoIndex((prev) => prev !== null ? (prev - 1 + creativeImagesData.length) % creativeImagesData.length : null);
+      }
     };
-    if (selectedCert) window.addEventListener('keydown', handleKeyDown);
+    if (selectedCert || selectedPhotoIndex !== null) window.addEventListener('keydown', handleKeyDown);
     
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedCert]);
+  }, [selectedCert, selectedPhotoIndex]);
 
   // Monitor scroll position for the Back to Top button
   useEffect(() => {
@@ -111,14 +144,42 @@ export default function Home() {
   };
 
   return (
-    <main className="relative z-10 min-h-screen overflow-x-hidden p-4 sm:p-8 md:p-24 max-w-4xl mx-auto font-sans text-blue-50 selection:bg-orange-500 selection:text-blue-950">
+    <main className="relative z-10 w-full min-w-0 min-h-screen overflow-x-hidden p-4 sm:p-8 md:p-24 max-w-4xl mx-auto font-sans text-blue-50 selection:bg-orange-500 selection:text-blue-950">
       <style>{`
-        body::-webkit-scrollbar {
-          display: none;
+        html, body {
+          overflow-x: hidden;
+          width: 100%;
         }
-        body {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
+        /* Firefox */
+        html {
+          scrollbar-width: thin;
+          scrollbar-color: #f97316 #172554;
+        }
+        /* WebKit (Chrome, Safari, Edge) */
+        ::-webkit-scrollbar {
+          width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+          background: #172554; /* Match blue-950 background */
+        }
+        ::-webkit-scrollbar-thumb {
+          background: #f97316; /* orange-500 */
+          border-radius: 6px;
+          border: 3px solid #172554; /* Creates a padded effect inside the track */
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: #ea580c; /* orange-600 on hover */
+        }
+        @keyframes marquee {
+          0% { transform: translateX(0%); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 25s linear infinite; /* Decrease for faster, increase for slower */
+        }
+        .mask-edges {
+          mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+          -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
         }
       `}</style>
 
@@ -142,7 +203,7 @@ export default function Home() {
       <div className={`w-full transition-all duration-1000 delay-200 ease-out transform ${fadeOut ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
 
       {/* Navigation Menu */}
-      <nav className="flex flex-wrap gap-4 md:gap-8 mb-16 text-sm md:text-base font-semibold border-b border-blue-800/50 pb-4">
+      <nav className="flex flex-wrap gap-3 sm:gap-4 md:gap-8 justify-center md:justify-start mb-12 md:mb-16 text-sm md:text-base font-semibold border-b border-blue-800/50 pb-4">
         <a href="#about" className="text-blue-200 hover:text-orange-500 transition-colors">About</a>
         <a href="#skills" className="text-blue-200 hover:text-orange-500 transition-colors">Skills</a>
         <a href="#creative" className="text-blue-200 hover:text-orange-500 transition-colors">Creative Work</a>
@@ -152,13 +213,13 @@ export default function Home() {
       </nav>
 
       {/* Header / Hero Section */}
-      <section className="mb-16 flex flex-col-reverse md:flex-row items-center gap-8 md:gap-12">
+      <section className="mb-12 md:mb-16 flex flex-col-reverse md:flex-row items-center gap-8 md:gap-12 mt-4 md:mt-0">
         <div className="flex-1 text-center md:text-left">
-          <h1 className="text-4xl font-bold mb-4 min-h-[40px]">
-            Hello, I'm <span className="text-orange-500">{typedName}<span className="animate-pulse font-light text-orange-400">|</span></span>
+          <h1 className="text-3xl md:text-4xl font-bold mb-4 min-h-[108px] sm:min-h-20 md:min-h-12">
+            Hello, I&apos;m <span className="text-orange-500">{typedName}<span className="animate-pulse font-light text-orange-400">|</span></span>
           </h1>
-          <h2 className="text-xl text-blue-200 mb-6">IT Student & Aspiring Web Developer</h2>
-          <p className="text-blue-100 leading-relaxed mb-6">
+          <h2 className="text-lg sm:text-xl text-blue-200 mb-4 sm:mb-6">IT Student & Aspiring Web Developer</h2>
+          <p className="text-sm sm:text-base text-blue-100 leading-relaxed mb-6 text-justify">
             I am a passionate IT student focusing on frontend development, cloud infrastructure, and building great user experiences. 
             I also work as a freelance photographer, videographer, and video editor, bringing a strong creative eye and attention to detail to all my technical projects. Welcome to my digital portfolio!
           </p>
@@ -167,7 +228,7 @@ export default function Home() {
               Contact Me
               <svg className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
             </a>
-            <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className="inline-block px-6 py-3 border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-blue-950 font-bold rounded-lg transition-colors shadow-sm">
+            <a href="/resume (2).pdf" target="_blank" rel="noopener noreferrer" className="inline-block px-6 py-3 border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-blue-950 font-bold rounded-lg transition-colors shadow-sm">
               View CV
             </a>
             <a href="https://github.com/uriensuico09" target="_blank" rel="noopener noreferrer" className="p-3 bg-blue-900/40 hover:bg-orange-500 hover:text-blue-950 text-blue-200 rounded-lg transition-all border border-blue-800 hover:border-orange-500 shadow-sm" aria-label="GitHub">
@@ -191,9 +252,12 @@ export default function Home() {
         <div className="w-48 h-48 md:w-64 md:h-64 flex-shrink-0 relative group">
           {/* Subtle glowing effect behind the image */}
           <div className="absolute inset-0 bg-orange-500 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500 animate-pulse"></div>
-          <img 
+          <Image 
             src="/profile.png" 
             alt="Urien Adriane O. Suico" 
+            width={256}
+            height={256}
+            priority
             className="w-full h-full object-cover rounded-full border-4 border-blue-800 shadow-xl relative z-10 transition-transform duration-500 group-hover:scale-105 group-hover:-rotate-2"
           />
         </div>
@@ -203,11 +267,11 @@ export default function Home() {
       <section id="about" className="mb-16 pt-8">
         <h3 className="text-2xl font-semibold mb-6 border-b border-orange-500/30 pb-2">About Me</h3>
         <div className="bg-blue-950/40 border border-blue-800/40 p-6 sm:p-8 rounded-2xl backdrop-blur-sm shadow-sm hover:border-orange-500/30 transition-colors">
-          <p className="text-blue-200 leading-relaxed mb-4 text-base md:text-lg">
+          <p className="text-blue-200 leading-relaxed mb-4 text-sm sm:text-base md:text-lg text-justify">
             Hello! I am a dedicated IT student with a strong passion for crafting clean, intuitive, and dynamic digital experiences. My journey into technology started with a fascination for how things work under the hood, which quickly evolved into a love for frontend development, web design, and system architecture.
           </p>
-          <p className="text-blue-200 leading-relaxed text-base md:text-lg">
-            When I'm not writing code or studying, you can usually find me exploring my creative side through photography and videography. I believe that having a strong visual eye helps me build better, more engaging user interfaces. I am constantly learning new technologies and am always looking for exciting opportunities to collaborate and grow!
+          <p className="text-blue-200 leading-relaxed text-sm sm:text-base md:text-lg text-justify">
+            When I&apos;m not writing code or studying, you can usually find me exploring my creative side through photography and videography. I believe that having a strong visual eye helps me build better, more engaging user interfaces. I am constantly learning new technologies and am always looking for exciting opportunities to collaborate and grow!
           </p>
         </div>
       </section>
@@ -245,10 +309,10 @@ export default function Home() {
           <div className="flex flex-col md:flex-row gap-8 items-center">
             {/* Text & Skills Content */}
             <div className="flex-1 flex flex-col justify-center">
-              <h4 className="font-bold text-2xl mb-3 text-blue-50 flex items-center gap-3">
+              <h4 className="font-bold text-xl md:text-2xl mb-3 text-blue-50 flex items-center gap-3">
                 <span className="text-3xl">📸</span> Freelance Visual Creative
               </h4>
-              <p className="text-blue-200 text-base leading-relaxed mb-6">
+              <p className="text-blue-200 text-sm sm:text-base leading-relaxed mb-6 text-justify">
                 Alongside my IT studies, I have extensive experience in visual storytelling. I shoot, direct, and edit high-quality photo and video content for clients. This creative background gives me a unique perspective on UI/UX design and digital media.
               </p>
               <div className="flex flex-wrap gap-2 mb-8">
@@ -265,18 +329,11 @@ export default function Home() {
             
             {/* Asymmetric Image Grid */}
             <div className="flex-1 w-full grid grid-cols-2 gap-3 sm:gap-4 relative z-10">
-              <div className="flex flex-col gap-3 sm:gap-4">
-                <div className="overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300">
-                  <img src="/creative-1.jpg" alt="Creative work 1" loading="lazy" className="w-full h-32 sm:h-40 object-cover hover:scale-110 transition-transform duration-700" />
-                </div>
-                <div className="overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300">
-                  <img src="/creative-2.jpg" alt="Creative work 2" loading="lazy" className="w-full h-24 sm:h-32 object-cover hover:scale-110 transition-transform duration-700" />
-                </div>
+              <div className="overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300">
+                <img src="/creative-1.jpg" alt="Creative work 1" loading="lazy" className="w-full h-48 sm:h-64 object-cover hover:scale-110 transition-transform duration-700" />
               </div>
-              <div className="flex flex-col pt-6 sm:pt-10">
-                <div className="overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300">
-                  <video src="/creative-video.mp4" autoPlay loop muted playsInline className="w-full h-52 sm:h-64 object-cover hover:scale-110 transition-transform duration-700" />
-                </div>
+              <div className="overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300 mt-6 sm:mt-10">
+                <img src="/creative-2.jpg" alt="Creative work 2" loading="lazy" className="w-full h-48 sm:h-64 object-cover hover:scale-110 transition-transform duration-700" />
               </div>
             </div>
           </div>
@@ -288,45 +345,88 @@ export default function Home() {
       {/* Certificates Section */}
       <section id="certificates" className="mb-16 pt-8">
         <h3 className="text-2xl font-semibold mb-6 border-b border-orange-500/30 pb-2">Certifications</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {certificatesData.map((cert) => (
-            <a
-              key={cert.id}
-              href={cert.fileUrl}
-              onClick={(e) => {
-                e.preventDefault();
-                setSelectedCert({ 
-                  url: cert.thumbnail || cert.fileUrl, 
-                  type: cert.thumbnail ? 'image' : cert.type,
-                  pdfUrl: cert.type === 'pdf' ? cert.fileUrl : undefined
-                });
-              }}
-              onContextMenu={(e) => e.preventDefault()}
-              className="flex flex-col overflow-hidden rounded-xl border border-blue-800 bg-blue-950/95 shadow-sm transition-all duration-300 hover:border-orange-500/50 hover:shadow-md group cursor-pointer"
-            >
-              {cert.thumbnail || cert.type === 'image' ? (
-                <div className="relative h-48 overflow-hidden bg-blue-900/30 border-b border-blue-800/50">
-                  <img src={cert.thumbnail || cert.fileUrl} alt={cert.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                </div>
-              ) : (
-                <div className="relative flex h-48 items-center justify-center overflow-hidden bg-blue-900/30 border-b border-blue-800/50">
-                  <span className="text-6xl transition-transform duration-300 group-hover:scale-110">📄</span>
-                </div>
-              )}
-              <div className="p-4 flex flex-1 items-center justify-center bg-blue-950/40">
-                <h4 className="font-bold text-md text-center text-blue-50 transition-colors group-hover:text-orange-400 line-clamp-2">{cert.title}</h4>
-              </div>
-            </a>
-          ))}
+        <div className="relative w-full overflow-hidden mask-edges py-4 group/marquee">
+          <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
+            {/* First Set */}
+            <div className="flex gap-6 pr-6">
+              {certificatesData.map((cert) => (
+                <a
+                  key={cert.id}
+                  href={cert.fileUrl}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setSelectedCert({ 
+                      url: cert.thumbnail || cert.fileUrl, 
+                      type: cert.thumbnail ? 'image' : cert.type,
+                      pdfUrl: cert.type === 'pdf' ? cert.fileUrl : undefined
+                    });
+                  }}
+                  onContextMenu={(e) => e.preventDefault()}
+                  onMouseEnter={() => setIsHoveringCert(true)}
+                  onMouseLeave={() => setIsHoveringCert(false)}
+                  onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
+                  className="relative w-56 sm:w-80 flex-shrink-0 flex flex-col overflow-hidden rounded-xl border border-blue-800 bg-blue-950/95 shadow-sm transition-all duration-500 hover:border-orange-500 hover:shadow-[0_0_20px_rgba(249,115,22,0.4)] hover:-translate-y-2 group cursor-pointer opacity-100 md:group-hover/marquee:opacity-40 hover:!opacity-100"
+                >
+                  {cert.thumbnail || cert.type === 'image' ? (
+                    <div className="relative h-36 sm:h-48 overflow-hidden bg-blue-900/30 border-b border-blue-800/50">
+                      <Image src={cert.thumbnail || cert.fileUrl} alt={cert.title} width={320} height={240} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    </div>
+                  ) : (
+                    <div className="relative flex h-36 sm:h-48 items-center justify-center overflow-hidden bg-blue-900/30 border-b border-blue-800/50">
+                      <span className="text-6xl transition-transform duration-500 group-hover:scale-110">📄</span>
+                    </div>
+                  )}
+                  <div className="p-4 flex flex-1 items-center justify-center bg-blue-950/40">
+                    <h4 className="font-bold text-sm sm:text-md text-center text-blue-50 transition-colors group-hover:text-orange-400 line-clamp-2">{cert.title}</h4>
+                  </div>
+                </a>
+              ))}
+            </div>
+            {/* Second Set for seamless infinite scrolling */}
+            <div className="flex gap-6 pr-6" aria-hidden="true">
+              {certificatesData.map((cert) => (
+                <a
+                  key={`${cert.id}-duplicate`}
+                  href={cert.fileUrl}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setSelectedCert({ 
+                      url: cert.thumbnail || cert.fileUrl, 
+                      type: cert.thumbnail ? 'image' : cert.type,
+                      pdfUrl: cert.type === 'pdf' ? cert.fileUrl : undefined
+                    });
+                  }}
+                  onContextMenu={(e) => e.preventDefault()}
+                  onMouseEnter={() => setIsHoveringCert(true)}
+                  onMouseLeave={() => setIsHoveringCert(false)}
+                  onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
+                  className="relative w-56 sm:w-80 flex-shrink-0 flex flex-col overflow-hidden rounded-xl border border-blue-800 bg-blue-950/95 shadow-sm transition-all duration-500 hover:border-orange-500 hover:shadow-[0_0_20px_rgba(249,115,22,0.4)] hover:-translate-y-2 group cursor-pointer opacity-100 md:group-hover/marquee:opacity-40 hover:!opacity-100"
+                >
+                  {cert.thumbnail || cert.type === 'image' ? (
+                    <div className="relative h-36 sm:h-48 overflow-hidden bg-blue-900/30 border-b border-blue-800/50">
+                      <Image src={cert.thumbnail || cert.fileUrl} alt={cert.title} width={320} height={240} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    </div>
+                  ) : (
+                    <div className="relative flex h-36 sm:h-48 items-center justify-center overflow-hidden bg-blue-900/30 border-b border-blue-800/50">
+                      <span className="text-6xl transition-transform duration-500 group-hover:scale-110">📄</span>
+                    </div>
+                  )}
+                  <div className="p-4 flex flex-1 items-center justify-center bg-blue-950/40">
+                    <h4 className="font-bold text-sm sm:text-md text-center text-blue-50 transition-colors group-hover:text-orange-400 line-clamp-2">{cert.title}</h4>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Contact / CTA Section */}
       <section id="contact" className="mb-16 pt-8 text-center">
-        <div className="border border-blue-800/40 bg-blue-950/40 backdrop-blur-sm rounded-3xl p-8 md:p-16 shadow-sm max-w-2xl mx-auto relative overflow-hidden">
+        <div className="border border-blue-800/40 bg-blue-950/40 backdrop-blur-sm rounded-3xl p-6 sm:p-8 md:p-16 shadow-sm max-w-2xl mx-auto relative overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl -z-10 pointer-events-none"></div>
-          <h3 className="text-3xl font-bold mb-4 text-blue-50">Ready to start a project?</h3>
-          <p className="text-blue-200 mb-8 leading-relaxed">
+          <h3 className="text-2xl md:text-3xl font-bold mb-4 text-blue-50">Ready to start a project?</h3>
+          <p className="text-sm md:text-base text-blue-200 mb-8 leading-relaxed text-justify">
             Whether you have a specific project in mind, need a freelance developer or creative, or just want to connect, my inbox is always open!
           </p>
           <form onSubmit={handleContactSubmit} className="flex flex-col gap-4 text-left mt-8 max-w-xl mx-auto relative z-10">
@@ -372,22 +472,58 @@ export default function Home() {
                     Open PDF &rarr;
                   </a>
                 )}
-                <button onClick={() => setSelectedCert(null)} className="text-blue-200 hover:text-orange-500 font-bold text-2xl leading-none">&times;</button>
+                <button type="button" onClick={() => setSelectedCert(null)} className="text-blue-200 hover:text-orange-500 font-bold text-2xl leading-none">&times;</button>
               </div>
             </div>
             <div className="flex-1 w-full h-full bg-blue-950/90 relative flex items-center justify-center overflow-hidden">
               {selectedCert.type === 'pdf' ? (
-                <iframe src={`${selectedCert.url}#toolbar=0&view=FitH`} className="w-full h-full border-none bg-white" />
+                <iframe src={`${selectedCert.url}#toolbar=0&view=FitH`} title="Certificate PDF Viewer" className="w-full h-full border-none bg-white" />
               ) : (
-                <img src={selectedCert.url} alt="Certificate Preview" className="max-w-full max-h-full object-contain p-2" />
+                <Image src={selectedCert.url} alt="Certificate Preview" fill className="object-contain p-2" unoptimized />
               )}
             </div>
           </div>
         </div>
       )}
 
+      {/* Photography Lightbox Modal */}
+      {selectedPhotoIndex !== null && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/90 p-4 sm:p-8 backdrop-blur-md transition-opacity duration-300" onClick={() => setSelectedPhotoIndex(null)} role="dialog" aria-modal="true" aria-label="Image gallery lightbox">
+          <button type="button" onClick={() => setSelectedPhotoIndex(null)} className="absolute top-6 right-6 sm:top-8 sm:right-8 text-blue-200 hover:text-orange-500 font-bold text-4xl leading-none z-10 transition-colors drop-shadow-lg" aria-label="Close lightbox">&times;</button>
+          
+          {/* Previous Button */}
+          <button type="button" onClick={(e) => { e.stopPropagation(); setSelectedPhotoIndex((selectedPhotoIndex - 1 + creativeImagesData.length) % creativeImagesData.length); }} className="absolute left-2 sm:left-8 p-2 text-blue-200 hover:text-orange-500 font-bold text-5xl sm:text-7xl z-10 transition-transform hover:-translate-x-2 drop-shadow-lg focus:outline-none" aria-label="Previous photo">&#8249;</button>
+          
+          {/* Next Button */}
+          <button type="button" onClick={(e) => { e.stopPropagation(); setSelectedPhotoIndex((selectedPhotoIndex + 1) % creativeImagesData.length); }} className="absolute right-2 sm:right-8 p-2 text-blue-200 hover:text-orange-500 font-bold text-5xl sm:text-7xl z-10 transition-transform hover:translate-x-2 drop-shadow-lg focus:outline-none" aria-label="Next photo">&#8250;</button>
+
+          {/* The onClick stopPropagation prevents closing the modal when clicking the image itself */}
+          <div className="relative w-full max-w-5xl h-[70vh] sm:h-[85vh] flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+            <Image src={creativeImagesData[selectedPhotoIndex].src} alt={creativeImagesData[selectedPhotoIndex].alt} fill className="object-contain drop-shadow-2xl transition-all duration-300" unoptimized />
+          </div>
+          
+          {/* Image Counter */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-blue-200 text-sm font-semibold tracking-widest z-10 drop-shadow-md">
+            {selectedPhotoIndex + 1} / {creativeImagesData.length}
+          </div>
+        </div>
+      )}
+
+      {/* Custom Mouse Follower Tooltip */}
+      <div 
+        className={`hidden md:block fixed pointer-events-none z-[60] px-3 py-1.5 bg-orange-500 text-blue-950 text-sm font-bold rounded-md shadow-[0_0_15px_rgba(249,115,22,0.4)] transition-opacity duration-200 ${isHoveringCert && !selectedCert ? 'opacity-100' : 'opacity-0'}`}
+        style={{ 
+          left: `${mousePos.x + 15}px`, 
+          top: `${mousePos.y + 15}px`,
+        }}
+        aria-hidden="true"
+      >
+        Click to expand
+      </div>
+
       {/* Back to Top Button */}
       <button
+        type="button"
         onClick={scrollToTop}
         className={`fixed bottom-8 right-8 p-3 bg-orange-500 text-blue-950 rounded-full shadow-[0_0_15px_rgba(249,115,22,0.4)] transition-all duration-300 z-50 ${showBackToTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'} hover:bg-orange-600 hover:scale-110`}
         aria-label="Back to top"

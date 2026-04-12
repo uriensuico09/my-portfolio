@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 const projectsData = [
   { 
@@ -22,7 +23,7 @@ export default function ProjectsSection() {
           <div key={project.id} className="group flex flex-col border border-blue-800/40 bg-blue-950/40 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-orange-500/50 hover:bg-blue-900/40">
             <div className="relative h-48 overflow-hidden bg-blue-900/20">
               <div className="absolute inset-0 bg-blue-950/20 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
-              <img src={project.image} alt={project.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              <Image src={project.image} alt={project.title} width={600} height={400} unoptimized={project.image.startsWith('http')} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
             </div>
             <div className="p-6 flex flex-col flex-grow">
               <h4 className="font-bold text-xl mb-3 text-blue-50 group-hover:text-orange-400 transition-colors">{project.title}</h4>
