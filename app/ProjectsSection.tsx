@@ -6,7 +6,7 @@ const projectsData = [
     id: 1, 
     title: "HCDC Logbooks", 
     description: "A digital logbook and records management system developed for HCDC. Built to efficiently track, manage, and monitor entries with a clean, modern user interface.", 
-    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80",
+    image: "/hcdc-logs.jpg", // Make sure to place your image file inside the "public" folder
     tags: ["PHP", "SQL", "LARAVEL",  "JAVASCRIPT", "HTML", "CSS"],
     github: "https://github.com/uriensuico09/HCDC-LAB-SYSTEM",
     demo: "" 
