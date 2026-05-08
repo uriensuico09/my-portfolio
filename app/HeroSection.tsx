@@ -45,7 +45,7 @@ export default function HeroSection({ typedName }: { typedName: string }) {
         {/* Subtle glowing effect behind the image */}
         <div className="absolute inset-0 bg-orange-500 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500 animate-pulse"></div>
         <Image 
-          src="/profile.png" 
+          src="/profile.jpg" 
           alt="Urien Adriane O. Suico" 
           width={256}
           height={256}
