@@ -9,38 +9,47 @@ const projectsData = [
     image: "/hcdc-logs.jpg", // Make sure to place your image file inside the "public" folder
     tags: ["PHP", "SQL", "LARAVEL",  "JAVASCRIPT", "HTML", "CSS"],
     github: "https://github.com/uriensuico09/HCDC-LAB-SYSTEM",
+    demo: "" ,
+  },
+  {
+
+    id: 2, 
+    title: "InternConnect", 
+    description: "A Web-Based Internship Monitoring and Predictive Placement System with Pre and Post Assessment Analysis.", 
+    image: "/internconnect.png", // Make sure to place your image file inside the "public" folder
+    tags: ["PHP", "PHYTHON",  "JAVASCRIPT", "HTML", "CSS"],
+    github: "https://github.com/WqNTqP/InternConnect",
     demo: "" 
   }
-  
 ];
 
 export default function ProjectsSection() {
   return (
     <section id="projects" className="mb-16 pt-8">
-      <h3 className="text-2xl font-semibold mb-6 border-b border-orange-500/30 pb-2">Featured Projects</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+      <h3 className="text-2xl font-semibold mb-6 border-b border-orange-500/30 pb-2 reveal-on-scroll">Featured Projects</h3>
+      <div className="flex flex-col gap-10 md:gap-16">
         {projectsData.map((project, index) => (
-          <div key={project.id} className="group flex flex-col border border-blue-800/40 bg-blue-950/40 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-orange-500/50 hover:bg-blue-900/40 reveal-on-scroll" style={{ animationDelay: `${index * 150}ms` }}>
-            <div className="relative h-48 overflow-hidden bg-blue-900/20">
+          <div key={project.id} className={`group flex flex-col ${index % 2 !== 0 ? 'md:flex-row-reverse' : 'md:flex-row'} border border-blue-800/40 bg-blue-950/40 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-orange-500/50 hover:bg-blue-900/40 reveal-on-scroll ${index % 2 === 0 ? 'slide-in-left' : 'slide-in-right'}`} style={{ animationDelay: `${index * 150}ms` }}>
+            <div className="relative w-full md:w-1/2 h-64 md:h-auto overflow-hidden bg-blue-900/20">
               <div className="absolute inset-0 bg-blue-950/20 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
               <Image src={project.image} alt={project.title} width={600} height={400} unoptimized={project.image.startsWith('http')} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
             </div>
-            <div className="p-6 flex flex-col flex-grow">
-              <h4 className="font-bold text-xl mb-3 text-blue-50 group-hover:text-orange-400 transition-colors">{project.title}</h4>
-              <p className="text-blue-200 text-sm leading-relaxed mb-6 flex-grow">{project.description}</p>
-              <div className="flex flex-wrap gap-2 mb-6 mt-auto">
+            <div className="p-6 md:p-8 lg:p-10 flex flex-col flex-grow w-full md:w-1/2 justify-center">
+              <h4 className="font-bold text-2xl md:text-3xl mb-4 text-blue-50 group-hover:text-orange-400 transition-colors">{project.title}</h4>
+              <p className="text-blue-200 text-base leading-relaxed mb-8 flex-grow">{project.description}</p>
+              <div className="flex flex-wrap gap-2 mb-8">
                 {project.tags.map(tag => (
                   <span key={tag} className="px-2.5 py-1 bg-blue-900/50 text-orange-300 rounded-md text-xs font-semibold border border-blue-800/30">{tag}</span>
                 ))}
               </div>
-              <div className="flex flex-wrap items-center gap-4 mt-auto pt-4 border-t border-blue-800/30">
+              <div className="flex flex-wrap items-center gap-6 mt-auto pt-6 border-t border-blue-800/30">
                 {project.demo ? (
-                  <a href={project.demo} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-orange-500 hover:text-orange-400 font-semibold text-sm transition-colors">
+                  <a href={project.demo} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-blue-950 font-bold rounded-lg transition-colors">
                     Live Demo <span className="transition-transform group-hover:translate-x-1">&rarr;</span>
                   </a>
                 ) : null}
                 {project.github ? (
-                  <a href={project.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-blue-300 hover:text-blue-100 font-semibold text-sm transition-colors">
+                  <a href={project.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-blue-300 hover:text-orange-400 font-bold transition-colors">
                     Source Code
                   </a>
                 ) : null}

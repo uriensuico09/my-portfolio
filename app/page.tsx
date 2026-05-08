@@ -145,6 +145,22 @@ export default function Home() {
       .reveal-on-scroll.is-revealed {
         animation: scrollReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       }
+      @media (min-width: 768px) {
+        @keyframes slideInLeft {
+          from { opacity: 0; transform: translateX(-60px) translateY(40px); }
+          to { opacity: 1; transform: translateX(0) translateY(0); }
+        }
+        @keyframes slideInRight {
+          from { opacity: 0; transform: translateX(60px) translateY(40px); }
+          to { opacity: 1; transform: translateX(0) translateY(0); }
+        }
+        .reveal-on-scroll.slide-in-left.is-revealed {
+          animation: slideInLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .reveal-on-scroll.slide-in-right.is-revealed {
+          animation: slideInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+      }
       `}</style>
 
       {/* Animated Loading Splash Screen */}

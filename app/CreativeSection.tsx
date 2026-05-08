@@ -38,7 +38,7 @@ export default function CreativeSection() {
   return (
     <>
       <section id="creative" className="mb-16 pt-8">
-        <h3 className="text-2xl font-semibold mb-6 border-b border-orange-500/30 pb-2">Creative Experience</h3>
+        <h3 className="text-2xl font-semibold mb-6 border-b border-orange-500/30 pb-2 reveal-on-scroll">Creative Experience</h3>
         <BorderGlow 
           className="p-6 sm:p-8 shadow-sm transition-all duration-500 group/card relative overflow-hidden reveal-on-scroll"
           backgroundColor="#172554" // Tailwind bg-blue-950
@@ -48,7 +48,7 @@ export default function CreativeSection() {
         >
           <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl -z-10 group-hover/card:bg-orange-500/10 transition-colors duration-500 pointer-events-none"></div>
           <div className="flex flex-col lg:flex-row gap-8 items-center">
-            <div className="flex-1 flex flex-col justify-center">
+            <div className="flex-1 flex flex-col justify-center reveal-on-scroll slide-in-left">
               <h4 className="font-bold text-xl md:text-2xl mb-3 text-blue-50 flex items-center gap-3">
                 <span className="text-3xl">📸</span> Freelance Visual Creative
               </h4>
@@ -70,7 +70,7 @@ export default function CreativeSection() {
             <div className="flex-1 w-full flex flex-col gap-3 sm:gap-4 relative z-10">
               <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 <div 
-                  className="relative overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300 cursor-pointer group"
+                  className="relative overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300 cursor-pointer group reveal-on-scroll slide-in-left"
                   onClick={() => setSelectedMediaIndex(0)}
                 >
                   <img src="/c11.jpg" alt="Creative work 1" loading="lazy" className="w-full h-48 sm:h-64 object-cover hover:scale-110 transition-transform duration-700" />
@@ -79,7 +79,8 @@ export default function CreativeSection() {
                   </div>
                 </div>
                 <div 
-                  className="relative overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300 cursor-pointer group"
+                  className="relative overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300 cursor-pointer group reveal-on-scroll slide-in-right"
+                  style={{ animationDelay: '150ms' }}
                   onClick={() => setSelectedMediaIndex(1)}
                 >
                   <video autoPlay loop muted playsInline className="w-full h-48 sm:h-64 object-cover hover:scale-110 transition-transform duration-700">
@@ -95,8 +96,8 @@ export default function CreativeSection() {
                 {creativeMediaData.slice(2).map((item, index) => (
                   <div 
                     key={item.id} 
-                    className="relative overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300 cursor-pointer group reveal-on-scroll"
-                    style={{ animationDelay: `${index * 150}ms` }}
+                    className={`relative overflow-hidden rounded-xl border border-blue-800/50 hover:border-orange-500 shadow-sm hover:shadow-orange-500/20 transition-all duration-300 cursor-pointer group reveal-on-scroll ${index % 2 === 0 ? 'slide-in-left' : 'slide-in-right'}`}
+                    style={{ animationDelay: `${(index + 2) * 150}ms` }}
                     onClick={() => setSelectedMediaIndex(index + 2)}
                   >
                     <img src={item.src} alt={item.alt} loading="lazy" className="w-full h-24 sm:h-32 object-cover hover:scale-110 transition-transform duration-700" />
