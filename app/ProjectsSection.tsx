@@ -16,7 +16,7 @@ const projectsData = [
     id: 2, 
     title: "InternConnect", 
     description: "A Web-Based Internship Monitoring and Predictive Placement System with Pre and Post Assessment Analysis.", 
-    image: "/internconnect.png", // Make sure to place your image file inside the "public" folder
+    image: "/internconnect.jpg", // Make sure to place your image file inside the "public" folder
     tags: ["PHP", "PHYTHON",  "JAVASCRIPT", "HTML", "CSS"],
     github: "https://github.com/WqNTqP/InternConnect",
     demo: "" 
